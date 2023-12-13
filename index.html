@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node.js App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <button class="btn btn-warning btn-block mb-2" onclick="readDirectory()">Read Directory</button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-warning btn-block mb-2" onclick="getData()">Get Data</button>
+        </div>
+    </div>
+
+    <hr>
+
+    <form id="postDataForm" class="form-inline mb-4">
+        <label class="mr-2" for="newData">New Data:</label>
+        <input type="text" class="form-control mr-2" id="newData" name="newData" required>
+        <button type="submit" class="btn btn-warning">Add Data</button>
+    </form>
+
+    <form id="putDataForm" class="form-inline mb-4">
+        <label class="mr-2" for="updateId">Update Data (ID):</label>
+        <input type="number" class="form-control mr-2" id="updateId" name="updateId" required>
+        <label class="mr-2" for="updateName">New Name:</label>
+        <input type="text" class="form-control mr-2" id="updateName" name="updateName" required>
+        <button type="submit" class="btn btn-warning">Update Data</button>
+    </form>
+
+    <form id="deleteDataForm" class="form-inline mb-4">
+        <label class="mr-2" for="deleteId">Delete Data (ID):</label>
+        <input type="number" class="form-control mr-2" id="deleteId" name="deleteId" required>
+        <button type="submit" class="btn btn-danger">Delete Data</button>
+    </form>
+</div>
+
+<script>
+    function readDirectory() {
+        fetch('/readdir')
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+    }
+
+    function getData() {
+        fetch('/api/data')
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+    }
+
+    // Form submission for adding new data
+    document.getElementById('postDataForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const newData = document.getElementById('newData').value;
+
+        fetch('/api/data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: newData }),
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+    });
+
+    // Form submission for updating data
+    document.getElementById('putDataForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const updateId = document.getElementById('updateId').value;
+        const updateName = document.getElementById('updateName').value;
+
+        fetch(`/api/data/${updateId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: updateName }),
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+    });
+
+    document.getElementById('deleteDataForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const deleteId = document.getElementById('deleteId').value;
+
+        fetch(`/api/data/${deleteId}`, {
+            method: 'DELETE',
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+    });</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
